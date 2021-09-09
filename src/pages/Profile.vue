@@ -8,8 +8,8 @@
         <p>{{ customer.lastName}} </p> 
         <p>{{ customer.dateOfBirth}} </p> 
         <p>{{ customer.numberAccount}} </p> 
-        <button type = "button" class ="btn transfer" @click="$router.push({name:'transfer'})">Перевести</button>
-          
+        <div><button type = "button" class ="btn transfer" @click="$router.push({name:'transfer'})">Перевести</button></div>
+        <div><button type = "button" class ="btn accounts" @click="$router.push({name:'accounts'})">Показать счета</button></div>
     </div>
 </template>
 
@@ -18,13 +18,14 @@ export default {
     name: 'Profile',
 
     data() {
+        
         return{
             customer : {
-            firstName : '',
-            lastName : '', 
-            patronymic : '',
-            dateOfBirth : '',
-            numberAccount : 1
+                firstName : '',
+                lastName : '', 
+                patronymic : '',
+                dateOfBirth : '',
+                numberAccount : 1
             },
             id : 6
 
@@ -32,7 +33,7 @@ export default {
     }, 
     methods : {
          getCustomerId(){
-            fetch('http://localhost:8090/api/users?objectId=' + this.id)
+            fetch('http://localhost:8090/api/user?objectId=' + this.id)
             .then(result => result.json())
             .then(dataJson => {
             this.customer.firstName = dataJson.firstName
@@ -40,7 +41,7 @@ export default {
             this.customer.patronymic = dataJson.patronymic
             this.customer.dateOfBirth = dataJson.datOfBirth
             this.customer.numberAccount = dataJson.numberAccount
-            console.log(dataJson)
+            //console.log(dataJson)
             })
         },
     }
