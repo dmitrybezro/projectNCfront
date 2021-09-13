@@ -1,15 +1,28 @@
 <template>
     <div>
-        <h1> Профиль пользователя </h1>
-         {{ getCustomerId()}}
-        
-        <p>{{ customer.firstName}} </p>
-        <p>{{ customer.patronymic}} </p>  
-        <p>{{ customer.lastName}} </p> 
-        <p>{{ customer.dateOfBirth}} </p> 
-        <p>{{ customer.numberAccount}} </p> 
-        <div><button type = "button" class ="btn transfer" @click="$router.push({name:'transfer'})">Перевести</button></div>
-        <div><button type = "button" class ="btn accounts" @click="$router.push({name:'accounts'})">Показать счета</button></div>
+        <div id="headers">
+            <h1> Профиль пользователя </h1>
+        </div>
+
+        <div id="information">
+            <b id="name">
+
+            </b>
+            <div id="date-of-birth">
+
+            </div>
+
+            <div id="accounts-number">
+
+            </div>
+        </div>
+
+        <div id="system-buttons">
+            <br>
+            <button type = "button" class ="btn-transfer" @click="$router.push({name:'transfer'})">Сделать перевод</button>
+            <button type = "button" class ="btn-accounts" @click="$router.push({name:'accounts'})">Показать счета</button>
+        </div>
+       
     </div>
 </template>
 
@@ -36,14 +49,20 @@ export default {
             fetch('http://localhost:8090/api/user?objectId=' + this.id)
             .then(result => result.json())
             .then(dataJson => {
-            this.customer.firstName = dataJson.firstName
-            this.customer.lastName = dataJson.lastName
-            this.customer.patronymic = dataJson.patronymic
-            this.customer.dateOfBirth = dataJson.datOfBirth
-            this.customer.numberAccount = dataJson.numberAccount
-            //console.log(dataJson)
+                this.customer.firstName = dataJson.firstName
+                this.customer.lastName = dataJson.lastName
+                this.customer.patronymic = dataJson.patronymic
+                this.customer.dateOfBirth = dataJson.datOfBirth
+                this.customer.numberAccount = dataJson.numberAccount
+
+                document.getElementById('name').innerHTML = "<br>" + this.customer.firstName + " " + this.customer.patronymic + " " + this.customer.lastName 
+                document.getElementById('date-of-birth').innerHTML = "<br> Дата рождения : " + this.customer.dateOfBirth
+                document.getElementById('accounts-number').innerHTML = "<br> Число счетов : " + dataJson.numberAccount
             })
-        },
+        }
+    },
+    mounted() {
+        this.getCustomerId();
     }
 
 }

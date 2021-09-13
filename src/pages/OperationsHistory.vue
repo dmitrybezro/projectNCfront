@@ -21,7 +21,21 @@
 
         <div>
             <p></p>
-             <button type = "button" class ="btn-history-show" @click=show()>Показать</button>
+             <button type = "button" class ="btn-history-show" @click=getHistory()>Показать</button>
+             <button type = "button" class ="btn-back-profile" @click="$router.push({name:'accounts'})">Вернуться к счетам</button>
+        </div>
+        
+        <div id = "output-history">
+            <br>
+            <table border="2" id="tbl">
+                <caption>История операций</caption> 
+                <tr> 
+                    <th> Тип операции </th> 
+                    <th> Сумма перевода </th> 
+                    <th> Дата </th> 
+                </tr>
+   
+            </table> 
         </div>
     </div>
     
@@ -39,13 +53,16 @@ name : 'OperationsHistory',
             elementsNumber : 0,
             startDate : Date,
             endDate : Date,
+            transactions : []
+
+            
         }
     },
 
     methods : {
-        show() {
+        getHistory() {
             this.idCurrentAccount = document.getElementById('inputId').value
-            this.pageNumber = document.getElementById('pageNumber').value
+            this.pageNumber = document.getElementById('pageNumber').value - 1
             this.elementsNumber = document.getElementById('elementsNumber').value
             this.startDate = document.getElementById('startDate').value
             this.endDate = document.getElementById('endDate').value
@@ -54,17 +71,41 @@ name : 'OperationsHistory',
              "&end_date=" + this.endDate + "&page=" + this.pageNumber + "&items=" + this.elementsNumber)
             .then(result => result.json())
              .then(dataJson => {
-               
-                // if (dataJson.id !== undefined){
-                //      document.getElementById('empty').innerHTML = 'Баланс: ' + dataJson.balance + ' Валюта: ' + dataJson.currency
-                // } else {
-                //     document.getElementById('empty').innerHTML = "Счета не существует"
-                // }
-               
-                console.log(dataJson)
+                 let transaction = {
+                     type : "",
+                     payment : 0,
+                     date : ""
+                 }
+                for(let i = 0; i <dataJson.length; i++) {
+                    transaction.type = dataJson[i].type
+                    transaction.payment = dataJson[i].payment
+                    transaction.date = this.parseDate(dataJson[i].dateTransaction) 
+                    this.transactions.push(transaction)
+                }
+
+
+                if(this.transactions.length > 0) {
+                    this.showTable()
+                } else {
+                     document.getElementById('output-history').innerHTML += "<br> Операций не было произведено"
+                }
             })
-            //console.log(this.elementsNumber)
+        },
+        parseDate(date){
+            let rtn = ""
+            let i = 0
+            while(date[i] != 'T'){
+                    rtn += date[i]
+                    i++
+            }
+            return rtn
+        },
+        showTable(){
+            for(let i = 0; i < this.transactions.length; i++){
+                    document.getElementById('tbl').innerHTML += "<tr> <td>" +  this.transactions[i].type + " </td>" + "<td>" +  this.transactions[i].payment + " </td>" + "<td>" +  this.transactions[i].date + " </td> </tr>" 
+            }
         }
+
     }
 }
 </script>

@@ -2,25 +2,29 @@
     <div>
         <h1>Ваши счета</h1>
 
-            <div >
-                {{getAccounts()}}
-                <p id = "idAccounts"></p> 
-             </div>
+            <div id="information">
 
-             <div >
-               <input type = "text" placeholder="ID счета" id="inputId">
-              <button type = "button" class ="btn-back-profile" @click=inputFunction()>Подробнее о счете</button>
-              <p></p>
-              <div id = "empty"></div>
-             </div>
+            </div>
+
+            <div id="inputs-and-buttons">
+                <br>
+                <input type = "text" placeholder="ID счета" id="inputId">
+                <button type = "button" class ="btn-back-profile" @click=inputFunction()>Подробнее о счете</button>
+            </div>
+
+            <div id = "empty">
+                
+            </div>
+
+            <div id="system-buttons">
+                <br>
+                <button type = "button" class ="btn-operation-history" @click="$router.push({name:'history'})">История операций</button>
+                <br>
+                <br>
+                <button type = "button" class ="btn-back-profile" @click="$router.push({name:'profileCustomer'})">Вернуться на главную</button>
+            </div>
            
-             <p></p>
-             <div>
-
-            <button type = "button" class ="btn-operation-history" @click="$router.push({name:'history'})">История операций</button>
-            
-            <button type = "button" class ="btn-back-profile" @click="$router.push({name:'profileCustomer'})">Вернуться на главную</button>
-        </div>
+           
            
     </div>
 </template>
@@ -44,10 +48,9 @@ export default {
                 for(let i = 0; i < dataJson.length; i++){
                     ids += dataJson[i].id + " "
                 }
-                document.getElementById('idAccounts').innerHTML = "ID счетов : "+ ids
+                document.getElementById('information').innerHTML = "ID счетов : " + ids
                 })
         },
-        
         inputFunction(){
             let p = document.getElementById('inputId')
             this.idCurrentAccount = p.value
@@ -55,18 +58,18 @@ export default {
             .then(result => result.json())
              .then(dataJson => {
                
-                if (dataJson.id !== undefined){
-                     document.getElementById('empty').innerHTML = 'Баланс: ' + dataJson.balance + ' Валюта: ' + dataJson.currency
+                if (dataJson.id != undefined){
+                     document.getElementById('empty').innerHTML = "<br>" + 'Баланс: ' + dataJson.balance + ' Валюта: ' + dataJson.currency
                 } else {
-                    document.getElementById('empty').innerHTML = "Счета не существует"
-                }
-               
-                
+                    console.log(dataJson)
+                    document.getElementById('empty').innerHTML = "<br>" + "Счета не существует"
+                }                
             })
         }
+    },
+    mounted() {
+        this.getAccounts()
     }
-
 }
-
 </script>
 
