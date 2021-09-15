@@ -4,13 +4,19 @@ import Transfer from '../pages/Transfer';
 import MoreInfoTransfer from '../pages/MoreInfoTransfer';
 import Accounts from '../pages/Accounts';
 import OperationsHistory from '../pages/OperationsHistory';
+import Authentication from '../pages/Authentication'
 export default new VueRouter({
     mode: 'history',
     routes:[
         {
-            path:'/api/user',
+            path:'/api/users',
             name:'profileCustomer',
             component: Profile
+        },
+        {
+            path:'/api/user',
+            name:'Authentication',
+            component : Authentication
         },
         {
             path:'/api/transfer',
