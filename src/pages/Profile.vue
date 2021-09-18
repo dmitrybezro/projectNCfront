@@ -1,35 +1,45 @@
 <template>
     <div>
-        <div id="headers">
-            <h1> Профиль пользователя </h1>
-        </div>
+        <div class="maket">
+            <h1 class="head"> Профиль пользователя </h1>
+        
+            <div id="information" class="info">
+                <br>
+                <p id="l-name" class = "data" align="left">
+                    <b>Фамилия: </b>
+                </p>
 
-        <div id="information">
-            <b id="name">
+                <p id="f-name" class = "data">
+                    <b>Имя: </b>
+                </p>
 
-            </b>
-            <div id="date-of-birth">
+                <p id="p-name" class = "data">
+                    <b>Отчество: </b>
+                </p>
 
+                <p id="date-of-birth" class = "data">
+                    <b>Дата рождения: </b>
+                </p>
+
+                <p id="accounts-number" class = "data">
+                    <b>Число счетов: </b>
+                </p>
             </div>
 
-            <div id="accounts-number">
-
+            <div id="system-buttons">
+                <br><br>
+                <button type = "button" class ="btn-t" @click="$router.push({name:'transfer'})">Сделать перевод</button>
+                <button type = "button" class ="btn-a" @click="$router.push({name:'accounts'})">Показать счета</button>
+                <br><br><button type = "button" class ="btn-au" @click="$router.push({name:'Authentication'},deleteData())">Выйти</button>
             </div>
         </div>
-
-        <div id="system-buttons">
-            <br>
-            <button type = "button" class ="btn-transfer" @click="$router.push({name:'transfer'})">Сделать перевод</button>
-            <button type = "button" class ="btn-accounts" @click="$router.push({name:'accounts'})">Показать счета</button>
-        </div>
-       
     </div>
+    
 </template>
 
 <script>
 export default {
     name: 'Profile',
-
     data() {
         
         return{
@@ -39,31 +49,69 @@ export default {
                 patronymic : '',
                 dateOfBirth : '',
                 numberAccount : 1
-            },
-            id : 6
-
+            }
         }
     }, 
     methods : {
          getCustomerId(){
-            fetch('http://localhost:8090/api/user?objectId=' + this.id)
-            .then(result => result.json())
-            .then(dataJson => {
-                this.customer.firstName = dataJson.firstName
-                this.customer.lastName = dataJson.lastName
-                this.customer.patronymic = dataJson.patronymic
-                this.customer.dateOfBirth = dataJson.datOfBirth
-                this.customer.numberAccount = dataJson.numberAccount
-
-                document.getElementById('name').innerHTML = "<br>" + this.customer.firstName + " " + this.customer.patronymic + " " + this.customer.lastName 
-                document.getElementById('date-of-birth').innerHTML = "<br> Дата рождения : " + this.customer.dateOfBirth
-                document.getElementById('accounts-number').innerHTML = "<br> Число счетов : " + dataJson.numberAccount
-            })
+             this.customer = JSON.parse (localStorage.getItem ("user"));
+             console.log(this.customer)
+                document.getElementById('l-name').innerHTML += this.customer.lastName
+                document.getElementById('p-name').innerHTML += this.customer.patronymic
+                document.getElementById('f-name').innerHTML += this.customer.firstName 
+                document.getElementById('date-of-birth').innerHTML +=  this.customer.datOfBirth
+                document.getElementById('accounts-number').innerHTML += this.customer.numberAccount
+        },
+        deleteData(){
+            localStorage.clear()
         }
     },
     mounted() {
         this.getCustomerId();
     }
-
 }
 </script>
+
+<style>
+.head{
+    color: white;
+    border: 0;
+    /* text-align: center */
+}
+.data {
+    color: white;
+    font-size: 15pt;
+        top: 10%;
+    left: 10%;
+}
+.btn-t, .btn-a, .btn-au {
+    background: rgb(99, 180, 236);
+    color: rgb(255, 255, 255);
+    border: 0;
+    width: 150px;
+    height: 30px;
+}
+.btn-t{
+    position: absolute;
+    left: 50%;
+    top:75%;
+}
+.btn-a{
+    position: absolute;
+    left: 30%;
+    top:75%;
+}
+.btn-au {
+    position: relative;
+    left: 40%;
+    top:10%;
+}
+.maket {
+    background-color: rgb(158, 204, 233);
+    width: 800px;
+    height: 480px;
+    position: absolute;
+    top: 10%;
+    left: 40%;
+}
+</style>

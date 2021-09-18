@@ -1,24 +1,33 @@
 <template>
-     <div>
-        <h1>Sign in</h1>
+    <div>
+        <div class="auth-maket">
+        
+            <h1>Login</h1>
 
-        <label>Email</label>
-        <input required v-model="email" type="text" placeholder="Name"/>
+            <div>
+                <input required v-model="email" type="text" placeholder="Username" class="input-name"/>
+            </div>
 
-        <label>Password</label>
-        <input required v-model="password" type="password" placeholder="Password"/>
+            <br>
 
-        <hr/>
-        <button type="submit"  @click=auth()>Login</button>
- </div>
+            <div>
+                <input required v-model="password" type="password" placeholder="Password" class="input-password"/>
+            </div>
+            
+            <button type="submit"  @click=auth() class="btn">Login</button>
+
+            <br><br><br><br>
+            <p id='unautho' style="opacity : 0" >Unauthorized</p>            
+        </div><br>
+    </div>
 </template>
 
 <script>
 export default {
     data() {
         return {
-        email : "",
-        password : ""
+            email : "",
+            password : ""
         }
     },
     methods : {
@@ -31,9 +40,6 @@ export default {
             let header = new Headers()
 
             header.set('Authorization', 'Basic ' + base64.encode(username + ":" + password))
-            // header.append('Accept', 'application/json')
-            // header.append('Access-Control-Allow-Credentials', true)
-            
 
             fetch(url, 
             {   method:'GET',
@@ -42,11 +48,75 @@ export default {
             .then(result => result.json())
             .then(dataJson => {
                 if(dataJson.status == 401)
-                    console.log("Unauthorized")
+                   document.getElementById('unautho').setAttribute("style", "opacity : 1")
                 else{
-                    console.log(dataJson)
+                    if(dataJson.id != null){
+                        document.getElementById('unautho').setAttribute("style", "opacity : 0")
+                        localStorage.setItem('user', JSON.stringify(dataJson))
+                        localStorage.setItem('log', this.email)
+                        localStorage.setItem('pass', this.password)
+                        localStorage.setItem('id', dataJson.id)
+                        this.$router.push({name:'profileCustomer'})
+                    }
                 }})
         }
     }
 }
 </script>
+
+<style>
+.auth-maket {
+    background-color: rgb(158, 204, 233);
+    width: 550px;
+    height: 400px;
+    position: absolute;
+    top: 20%;
+    left: 60%;
+}
+body {
+    width: 100vh;
+    height: 100vh;
+    position: absolute;
+
+    background-color: rgb(190, 226, 248);
+}
+h1 {
+    color: rgb(255, 255, 255);
+    border: 0;
+    text-align: center
+}
+.input{
+    text-align: center
+}
+.btn {
+    background: rgb(99, 180, 236);
+    color: rgb(255, 255, 255);
+    border: 0;
+    position: relative;
+    left: 50%;
+    top:10%;
+    transform: translate(-50%, 0);
+    width:200px; 
+    height:50px;
+}
+.input-name, .input-password{
+    border: 0;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%, 0);
+    width:400px; 
+    height:50px;
+    font-style: italic;
+    font-size: 15pt
+}
+p{
+    text-align: center;
+    font-size : 15pt;
+    color: rgb(16, 35, 206);
+}
+button:active {
+  background : rgb(16, 35, 206);
+  transition: background 0s;
+}
+
+</style>
