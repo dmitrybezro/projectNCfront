@@ -49,42 +49,76 @@ name : 'Transfer',
         return {
             idAccountSend : "",
             idAccountRecv : "",
-            sum : "",           
+            sum : ""           
         }
     },
     methods : {
         transferFunction(){
-            if(this.sum > 0){
-                let base64 = require('base-64')
+            let errorMessage = this.validation()
+            if(errorMessage == ""){
                 fetch('http://localhost:8090/api/transfer',{
-                    method : 'POST',
-                    headers : {
-                        'Content-type' : 'application/json',
-                        'Authorization' :  'Basic ' + base64.encode(localStorage.getItem('log') + ":" + localStorage.getItem('pass'))
-                    },
-                    body : JSON.stringify({
-                        "idAccountSend" : this.idAccountSend,
-                        "idAccountReceive" : this.idAccountRecv, 
-                        "sum" : this.sum
-                    })
-                    }).then(result => result.json())
-                        .then(dataJson => {
-                            if(dataJson.id == undefined){
-                                document.getElementById('information').innerHTML = "Некорректные данные"
-                            } else {
-                                if(dataJson.status == "Error"){
-                                    document.getElementById('information').innerHTML = "Произошла ошибка : " + dataJson.errorMessage
-                                    document.getElementById('information').innerHTML += "<br> ID операции : " + dataJson.id
-                                } else if(dataJson.status == "New") {
-                                    document.getElementById('information').innerHTML = " Операция выполняется"
-                                    document.getElementById('information').innerHTML += "<br> ID операции : " + dataJson.id
-                                }
-                            }
-
+                            method : 'POST',
+                            headers : {
+                                'Content-type' : 'application/json',
+                                'Authorization' : 'Basic ' + localStorage.getItem('logpass')
+                            },
+                            body : JSON.stringify({
+                                "idAccountSend" : this.idAccountSend,
+                                "idAccountReceive" : this.idAccountRecv, 
+                                "sum" : this.sum
+                            })
+                            }).then(result => result.json())
+                                .then(dataJson => {
+                                    console.log(dataJson)
+                                    if(dataJson.status == 400) {
+                                        document.getElementById('information').innerHTML = " Не найден счет отправитель"
+                                    }else{
+                                        if(dataJson.id == undefined){
+                                            document.getElementById('information').innerHTML = "Некорректные данные"
+                                        } else {
+                                            if(dataJson.status == "Error"){
+                                                document.getElementById('information').innerHTML = "Произошла ошибка : " + dataJson.errorMessage
+                                                document.getElementById('information').innerHTML += "<br> ID операции : " + dataJson.id
+                                            } else if(dataJson.status == "New") {
+                                                document.getElementById('information').innerHTML = " Операция поступила в обработку"
+                                                document.getElementById('information').innerHTML += "<br> ID операции : " + dataJson.id
+                                            }
+                                        }
+                                    }
+                                   
                 })
             } else {
-                document.getElementById('information').innerHTML = " Введите корректное значение суммы"
-            } 
+                document.getElementById('information').innerHTML = errorMessage
+            }
+        },
+        validation(){
+            let messageError = " Некорректное значение"
+            if(this.isNumber(Number(this.sum)) && this.isNumber(Number(this.idAccountSend)) && this.isNumber(Number(this.idAccountRecv))){
+                if(this.sum > 0 && this.idAccountSend > 0 && this.idAccountRecv > 0){
+                    return ""
+                }
+            }
+
+            if(this.idAccountSend <= 0 || !this.isNumber(Number(this.idAccountSend))){
+                messageError += " счета отправителя"
+            }
+            if(this.idAccountRecv <= 0 || !this.isNumber(Number(this.idAccountRecv))){
+                if(messageError.length > 22){
+                    messageError += ","
+                }
+                messageError += " счета получателя"
+            }
+            if(this.sum <= 0 || !this.isNumber(Number(this.sum))){
+                if(messageError.length > 22){
+                    messageError += ","
+                }
+                messageError += " суммы"
+            }
+
+            return messageError 
+        },
+        isNumber(number){
+            return typeof number === 'number' && !isNaN(number)
         }
     }
 }

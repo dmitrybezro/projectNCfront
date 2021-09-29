@@ -24,7 +24,7 @@ export default new VueRouter({
             component: Transfer
         },
         {
-            path:'/api/transfer/{id}',
+            path:'/api/transfer/more',
             name:'moreInfo',
             component: MoreInfoTransfer
         },

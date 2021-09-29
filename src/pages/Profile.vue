@@ -55,7 +55,6 @@ export default {
     methods : {
          getCustomerId(){
              this.customer = JSON.parse (localStorage.getItem ("user"));
-             console.log(this.customer)
                 document.getElementById('l-name').innerHTML += this.customer.lastName
                 document.getElementById('p-name').innerHTML += this.customer.patronymic
                 document.getElementById('f-name').innerHTML += this.customer.firstName 
@@ -76,7 +75,6 @@ export default {
 .head{
     color: white;
     border: 0;
-    /* text-align: center */
 }
 .data {
     color: white;
@@ -113,5 +111,10 @@ export default {
     position: absolute;
     top: 10%;
     left: 40%;
+}
+.info p{
+    text-align: center;
+    font-size : 15pt;
+    color: rgb(250, 250, 250);
 }
 </style>

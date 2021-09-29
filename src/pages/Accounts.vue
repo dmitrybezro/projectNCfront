@@ -2,17 +2,7 @@
     <div>
         <div class="maket">
             <h1>Ваши счета</h1>
-
-            <h3 id="information" ></h3>
-
-            <div id="inputs-and-buttons">
-                <br>
-                <input required v-model="idCurrentAccount" type = "text" placeholder="ID счета" id="inputId" class="input-sum">
-                <br><br>
-                <button type = "button" class ="btn-ok" @click=inputFunction()>Подробнее о счете</button>
-            </div>
-
-            <div id = "empty" class="info-t"></div>
+            <account-list :accountIds= "accountsId" />
 
             <div id="system-buttons">
                 <br>
@@ -24,56 +14,36 @@
 </template>
 
 <script>
+import AccountList from '../components/AccountList.vue'
+
 export default {
+    components: { AccountList },
     name: 'Accounts',
     data() {
         return{
-            idCurrentAccount : ""
+            idCurrentAccount : "",
+            accountsId:[]
         }
     }, 
     methods : {
-         getAccounts(){  
-            let base64 = require('base-64')
-            console.log(localStorage.getItem('id'))
-            fetch('http://localhost:8090/api/accounts?objectId=' + localStorage.getItem('id'),
+        getAcountsId(){           
+            fetch('http://localhost:8090/api/accounts',
             {
                 headers : {
-                    'Authorization' : 'Basic ' + base64.encode(localStorage.getItem('log') + ":" + localStorage.getItem('pass'))
+                    'Authorization' : 'Basic ' + localStorage.getItem('logpass')
                 }
             })
             .then(result => result.json())
              .then(dataJson => {
-
-                 let ids = ""
                 for(let i = 0; i < dataJson.length; i++){
-                    ids += dataJson[i].id + " "
+                   this.accountsId.push(dataJson[i].id)
                 }
-                document.getElementById('information').innerHTML = "ID счетов : " + ids
-                })
-        },
-        inputFunction(){
-            let base64 = require('base-64')
-            fetch('http://localhost:8090/api/account/' + this.idCurrentAccount, 
-            {
-                headers : {
-                    //  Переделать, чтобы в localStorage хранилась сразу шифрованная строка log : pass
-                    'Authorization' : 'Basic ' + base64.encode(localStorage.getItem('log') + ":" + localStorage.getItem('pass'))
-                }
-            })
-            .then(result => result.json())
-             .then(dataJson => {
-               
-                if (dataJson.id != undefined){
-                     document.getElementById('empty').innerHTML = "<br>" + 'Баланс: ' + dataJson.balance + ' Валюта: ' + dataJson.currency
-                } else {
-                    console.log(dataJson)
-                    document.getElementById('empty').innerHTML = "<br>" + "Счета не существует"
-                }                
             })
         }
+
     },
     mounted() {
-        this.getAccounts()
+        this.getAcountsId()
     }
 }
 </script>

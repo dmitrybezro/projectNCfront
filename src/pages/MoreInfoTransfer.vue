@@ -33,33 +33,50 @@ name : 'Transfer',
             idTransaction : ""         
         }
     },
-
     methods : {
         learnFunction(){
-            let base64 = require('base-64')
-            console.log(localStorage.getItem('log')+localStorage.getItem('pass')+this.idTransaction)
-            fetch('http://localhost:8090/api/transfer/' + this.idTransaction, {
-                headers : {'Authorization' : 'Basic ' + base64.encode(localStorage.getItem('log') + ":" + localStorage.getItem('pass'))}
-            }
-            ).then(result => result.json())
-                    .then(dataJson => {
-                        console.log(dataJson)
-                        if(dataJson.id == undefined){
-                            document.getElementById('information').innerHTML = "Операции с заданным ID не найдено"
-                        } else {
-                            if(dataJson.status == "Error"){
-                                document.getElementById('information').innerHTML = "При выполнении операции произошла ошибка : " + dataJson.errorMessage
-                            } else if(dataJson.status == "New") {
-                                document.getElementById('information').innerHTML = "Началось выполнение операции"
-                            } else if(dataJson.status == "InProcess"){
-                                document.getElementById('information').innerHTML = "Операция выполняется"
-                            } else if(dataJson.status == "Success"){
-                                document.getElementById('information').innerHTML = "Операция выполнена"
+            let errorMessage = this.validation()
+            if(errorMessage == ""){
+                fetch('http://localhost:8090/api/transfer/' + this.idTransaction, {
+                headers : {
+                    'Authorization' : 'Basic ' + localStorage.getItem('logpass')
+                }}
+                ).then(result => result.json())
+                        .then(dataJson => {
+                            if(dataJson.status == 500 || dataJson.status == 400){
+                                document.getElementById('information').innerHTML = "Операции с заданным ID не найдено"
+                            } else {
+                                if(dataJson.status == "Error"){
+                                    document.getElementById('information').innerHTML = "При выполнении операции произошла ошибка : " + dataJson.errorMessage
+                                } else if(dataJson.status == "New") {
+                                    document.getElementById('information').innerHTML = "Началось выполнение операции"
+                                } else if(dataJson.status == "InProcess"){
+                                    document.getElementById('information').innerHTML = "Операция выполняется"
+                                } else if(dataJson.status == "Success"){
+                                    document.getElementById('information').innerHTML = "Операция выполнена"
+                                }
                             }
-                        }
-
-            })
+                })
+            }else{
+                document.getElementById('information').innerHTML = errorMessage
+            }
             
+            
+        }, 
+        validation(){
+            if(this.isNumber(Number(this.idTransaction)) && this.idTransaction > 0) {
+                return ""
+            }
+            if(!this.isNumber(Number(this.idTransaction))){
+                return "Введите числовое значение ID операции"
+            }
+            if(this.idTransaction <= 0){
+                return "Введите положительное значение ID операции"
+            }
+
+        },
+        isNumber(number){
+            return typeof number === 'number' && !isNaN(number)
         }
     }
 }

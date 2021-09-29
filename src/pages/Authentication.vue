@@ -2,22 +2,22 @@
     <div>
         <div class="auth-maket">
         
-            <h1>Login</h1>
+            <h1>Вход</h1>
 
             <div>
-                <input required v-model="email" type="text" placeholder="Username" class="input-name"/>
+                <input required v-model="email" type="text" placeholder="Логин" class="input-name"/>
             </div>
 
             <br>
 
             <div>
-                <input required v-model="password" type="password" placeholder="Password" class="input-password"/>
+                <input required v-model="password" type="password" placeholder="Пароль" class="input-password"/>
             </div>
             
-            <button type="submit"  @click=auth() class="btn">Login</button>
+            <button type="submit" @click=auth() class="btn">Войти</button>
 
             <br><br><br><br>
-            <p id='unautho' style="opacity : 0" >Unauthorized</p>            
+            <p id='unautho' style="opacity : 0" >Пользователь не зарегистрирован</p>            
         </div><br>
     </div>
 </template>
@@ -53,8 +53,7 @@ export default {
                     if(dataJson.id != null){
                         document.getElementById('unautho').setAttribute("style", "opacity : 0")
                         localStorage.setItem('user', JSON.stringify(dataJson))
-                        localStorage.setItem('log', this.email)
-                        localStorage.setItem('pass', this.password)
+                        localStorage.setItem('logpass', base64.encode(username + ":" + password))
                         localStorage.setItem('id', dataJson.id)
                         this.$router.push({name:'profileCustomer'})
                     }
@@ -109,7 +108,7 @@ h1 {
     font-style: italic;
     font-size: 15pt
 }
-p{
+auth-maket p{
     text-align: center;
     font-size : 15pt;
     color: rgb(16, 35, 206);
